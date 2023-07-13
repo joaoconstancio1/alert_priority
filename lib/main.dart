@@ -4,8 +4,15 @@ import 'alert_messenger.dart';
 
 void main() => runApp(const AlertPriorityApp());
 
-class AlertPriorityApp extends StatelessWidget {
+class AlertPriorityApp extends StatefulWidget {
   const AlertPriorityApp({super.key});
+
+  @override
+  State<AlertPriorityApp> createState() => _AlertPriorityAppState();
+}
+
+class _AlertPriorityAppState extends State<AlertPriorityApp> {
+  String alertText = 'adicione o texto aqui';
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +43,7 @@ class AlertPriorityApp extends StatelessWidget {
                       flex: 3,
                       child: Center(
                         child: Text(
-                          '<Adicione o texto do alerta de prioridade aqui>',
+                          alertText,
                           style: TextStyle(
                             color: Colors.grey[500],
                             fontSize: 16.0,
@@ -56,13 +63,19 @@ class AlertPriorityApp extends StatelessWidget {
                               children: [
                                 ElevatedButton(
                                   onPressed: () {
+                                    final text =
+                                        'Oops, ocorreu um erro. Pedimos desculpas.';
+                                    setState(() {
+                                      alertText = text;
+                                    });
                                     AlertMessenger.of(context).showAlert(
-                                      alert: const Alert(
+                                      alert: Alert(
                                         backgroundColor: Colors.red,
                                         leading: Icon(Icons.error),
                                         priority: AlertPriority.error,
                                         child: Text(
-                                            'Oops, ocorreu um erro. Pedimos desculpas.'),
+                                          text,
+                                        ),
                                       ),
                                     );
                                   },
@@ -83,13 +96,16 @@ class AlertPriorityApp extends StatelessWidget {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
+                                    final text = 'Atenção! Você foi avisado.';
+                                    setState(() {
+                                      alertText = text;
+                                    });
                                     AlertMessenger.of(context).showAlert(
-                                      alert: const Alert(
+                                      alert: Alert(
                                         backgroundColor: Colors.amber,
                                         leading: Icon(Icons.warning),
                                         priority: AlertPriority.warning,
-                                        child:
-                                            Text('Atenção! Você foi avisado.'),
+                                        child: Text(text),
                                       ),
                                     );
                                   },
@@ -110,13 +126,17 @@ class AlertPriorityApp extends StatelessWidget {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
+                                    final text =
+                                        'Este é um aplicativo escrito em Flutter.';
+                                    setState(() {
+                                      alertText = text;
+                                    });
                                     AlertMessenger.of(context).showAlert(
-                                      alert: const Alert(
+                                      alert: Alert(
                                         backgroundColor: Colors.green,
                                         leading: Icon(Icons.info),
                                         priority: AlertPriority.info,
-                                        child: Text(
-                                            'Este é um aplicativo escrito em Flutter.'),
+                                        child: Text(text),
                                       ),
                                     );
                                   },
