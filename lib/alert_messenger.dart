@@ -97,7 +97,6 @@ class AlertMessengerState extends State<AlertMessenger>
     with TickerProviderStateMixin {
   late final AnimationController controller;
   late final Animation<double> animation;
-  List<Alert> alertQueue = [];
 
   Widget? alertWidget;
 
@@ -127,17 +126,11 @@ class AlertMessengerState extends State<AlertMessenger>
   }
 
   void showAlert({required Alert alert}) {
-    setState(() {
-      alertQueue.add(alert);
-      alertQueue.sort((a, b) => b.priority.value.compareTo(a.priority.value));
-    });
+    setState(() => alertWidget = alert);
     controller.forward();
   }
 
   void hideAlert() {
-    setState(() {
-      alertQueue.removeAt(0);
-    });
     controller.reverse();
   }
 
@@ -163,9 +156,7 @@ class AlertMessengerState extends State<AlertMessenger>
               top: animation.value,
               left: 0,
               right: 0,
-              child: alertQueue.isNotEmpty
-                  ? alertQueue[0]
-                  : const SizedBox.shrink(),
+              child: alertWidget ?? const SizedBox.shrink(),
             ),
           ],
         );
