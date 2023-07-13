@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart';
 
 const kAlertHeight = 80.0;
 
@@ -113,6 +114,11 @@ class AlertMessengerState extends State<AlertMessenger>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+
+    final alertHeight = MediaQuery.of(context).padding.top + kAlertHeight;
+    animation = Tween<double>(begin: -alertHeight, end: 0.0).animate(
+      CurvedAnimation(parent: controller, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -136,6 +142,7 @@ class AlertMessengerState extends State<AlertMessenger>
         AlertMessenger.shouldShowAlert(alert.priority, currentPriority)) {
       setState(() {
         alerts.add(alert);
+        controller.reset();
         controller.forward();
       });
     }
