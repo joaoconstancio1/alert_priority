@@ -13,12 +13,12 @@ enum AlertPriority {
 
 class Alert extends StatelessWidget {
   const Alert({
-    super.key,
+    Key? key,
     required this.backgroundColor,
     required this.child,
     required this.leading,
     required this.priority,
-  });
+  }) : super(key: key);
 
   final Color backgroundColor;
   final Widget child;
@@ -66,9 +66,9 @@ class Alert extends StatelessWidget {
 
 class AlertMessenger extends StatefulWidget {
   const AlertMessenger({
-    super.key,
+    Key? key,
     required this.child,
-  });
+  }) : super(key: key);
 
   final Widget child;
 
@@ -90,6 +90,11 @@ class AlertMessenger extends StatefulWidget {
         ],
       );
     }
+  }
+
+  static bool shouldShowAlert(
+      AlertPriority priority, AlertPriority currentPriority) {
+    return priority.value >= currentPriority.value;
   }
 }
 
@@ -126,12 +131,18 @@ class AlertMessengerState extends State<AlertMessenger>
   }
 
   void showAlert({required Alert alert}) {
-    setState(() => alertWidget = alert);
-    controller.forward();
+    if (alertWidget == null ||
+        AlertMessenger.shouldShowAlert(
+            alert.priority, (alertWidget as Alert).priority)) {
+      setState(() => alertWidget = alert);
+      controller.forward();
+    }
   }
 
   void hideAlert() {
-    controller.reverse();
+    controller.reverse().then((_) {
+      setState(() => alertWidget = null);
+    });
   }
 
   @override
@@ -168,8 +179,8 @@ class AlertMessengerState extends State<AlertMessenger>
 class _AlertMessengerScope extends InheritedWidget {
   const _AlertMessengerScope({
     required this.state,
-    required super.child,
-  });
+    required Widget child,
+  }) : super(child: child);
 
   final AlertMessengerState state;
 
