@@ -103,7 +103,7 @@ class AlertMessengerState extends State<AlertMessenger>
   late final AnimationController controller;
   late final Animation<double> animation;
 
-  Widget? alertWidget;
+  List<Alert> alerts = [];
 
   @override
   void initState() {
@@ -131,17 +131,24 @@ class AlertMessengerState extends State<AlertMessenger>
   }
 
   void showAlert({required Alert alert}) {
-    if (alertWidget == null ||
-        AlertMessenger.shouldShowAlert(
-            alert.priority, (alertWidget as Alert).priority)) {
-      setState(() => alertWidget = alert);
-      controller.forward();
+    final currentPriority = alerts.isNotEmpty ? alerts.last.priority : null;
+    if (currentPriority == null ||
+        AlertMessenger.shouldShowAlert(alert.priority, currentPriority)) {
+      setState(() {
+        alerts.add(alert);
+        controller.forward();
+      });
     }
   }
 
   void hideAlert() {
     controller.reverse().then((_) {
-      setState(() => alertWidget = null);
+      setState(() {
+        alerts.removeLast();
+        if (alerts.isNotEmpty) {
+          controller.forward();
+        }
+      });
     });
   }
 
@@ -163,12 +170,13 @@ class AlertMessengerState extends State<AlertMessenger>
                 child: widget.child,
               ),
             ),
-            Positioned(
-              top: animation.value,
-              left: 0,
-              right: 0,
-              child: alertWidget ?? const SizedBox.shrink(),
-            ),
+            for (var i = 0; i < alerts.length; i++)
+              Positioned(
+                top: animation.value,
+                left: 0,
+                right: 0,
+                child: alerts[i],
+              ),
           ],
         );
       },
